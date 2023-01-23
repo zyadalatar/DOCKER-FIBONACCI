@@ -1,0 +1,36 @@
+language: generic
+sudo: required
+services:
+ - docker
+
+before_install:
+ - docker build -t zyadalatar/docker-complex-fibonacci-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true zyadalatar/docker-complex-fibonacci-test npm test
+
+after_success:
+ - docker build -t zyadalatar/docker-complex-fibonacci-client ./client
+ - docker build -t zyadalatar/docker-complex-fibonacci-api ./api
+ - docker build -t zyadalatar/docker-complex-fibonacci-worker ./worker
+ - docker build -t zyadalatar/docker-complex-fibonacci-nginx ./nginx
+ # login to docker CLI
+ - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+ - docker push zyadalatar/docker-complex-fibonacci-client
+ - docker push zyadalatar/docker-complex-fibonacci-api
+ - docker push zyadalatar/docker-complex-fibonacci-worker
+ - docker push zyadalatar/docker-complex-fibonacci-nginx
+ 
+# deploy:
+#   provider: elasticbeanstalk
+#   region: "eu-west-1"
+#   app: "multi-docker"
+#   env: "MultiDocker-env"
+#   bucket_name: "elasticbeanstalk-eu-west-1-528789133946"
+#   bucket_path: "docker-multi"
+#   on:
+#     branch: master
+#   access_key_id: 
+#     secure: $AWS_ACCESS_KEY
+#   secret_access_key:
+#     secure: $AWS_SECRET_KEY
