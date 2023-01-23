@@ -1,0 +1,44 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "client",
+            "image": "kamilberdychowski/docker-complex-fibonacci-client:latest",
+            "hostname": "client",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name" : "api",
+            "image": "kamilberdychowski/docker-complex-fibonacci-api:latest",
+            "hostname": "api",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "worker",
+            "image":"kamilberdychowski/docker-complex-fibonacci-worker:latest",
+            "hostname": "worker",
+            "essential": false,
+            "memory": 128
+        },
+        {
+            "name": "nginx",
+            "image":"kamilberdychowski/docker-complex-fibonacci-nginx:latest",
+            "hostname": "nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "client",
+                "api"
+            ],
+            "memory": 128
+        }
+    ]
+
+}
